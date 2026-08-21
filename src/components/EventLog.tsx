@@ -2,7 +2,15 @@ import { useMemo } from "react";
 import type { SimEvent, Snapshot } from "../sim/engine";
 import { EVENT_COLORS } from "./ui";
 
-export default function EventLog({ history, idx }: { history: Snapshot[]; idx: number }) {
+export default function EventLog({
+  history,
+  idx,
+  onEventClick,
+}: {
+  history: Snapshot[];
+  idx: number;
+  onEventClick?: (e: SimEvent) => void;
+}) {
   const events = useMemo(() => {
     const out: SimEvent[] = [];
     outer: for (let i = idx; i >= 0; i--) {
@@ -37,9 +45,10 @@ export default function EventLog({ history, idx }: { history: Snapshot[]; idx: n
           return (
             <div
               key={e.id}
-              className="flicker-in group mb-[3px] flex gap-2 border-l-2 py-[1px] pl-2 text-[9.5px] leading-snug"
+              onClick={() => onEventClick?.(e)}
+              className={`flicker-in group mb-[3px] flex gap-2 border-l-2 py-[1px] pl-2 text-[9.5px] leading-snug ${onEventClick ? "cursor-pointer hover:bg-[#4cc9f00d]" : ""}`}
               style={{ borderColor: `${col}55` }}
-              title={e.msg}
+              title={`${e.msg}${onEventClick ? " — click to jump the timeline here" : ""}`}
             >
               <span className="shrink-0 font-mono text-ink-400">{(e.t / 1000).toFixed(2)}s</span>
               <span
