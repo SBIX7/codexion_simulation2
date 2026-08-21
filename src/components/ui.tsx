@@ -10,18 +10,24 @@ export const identColor = (id: number) => IDENT[id % IDENT.length];
 
 /* ---------------- semantic colors ---------------- */
 
+/* semantic palette (design spec §8):
+   cyan = available/info · green = compiling/success · amber = debugging/warning
+   red = held/locked/burnout · orange = cooldown · gray = waiting/inactive      */
 export const PHASE_META: Record<Phase, { label: string; color: string; dim: string }> = {
-  think: { label: "think", color: "#7c93a6", dim: "rgba(124,147,166,0.16)" },
-  wait: { label: "wait", color: "#ffc53d", dim: "rgba(255,197,61,0.16)" },
-  compile: { label: "compile", color: "#3ddc97", dim: "rgba(61,220,151,0.16)" },
-  cooldown: { label: "cooldown", color: "#4cc9f0", dim: "rgba(76,201,240,0.16)" },
+  think: { label: "debug/refactor", color: "#ffc53d", dim: "rgba(255,197,61,0.16)" },
+  wait: { label: "waiting", color: "#8ca3b5", dim: "rgba(140,163,181,0.16)" },
+  compile: { label: "compiling", color: "#3ddc97", dim: "rgba(61,220,151,0.16)" },
+  cooldown: { label: "cooldown", color: "#ff8a3d", dim: "rgba(255,138,61,0.16)" },
   burnout: { label: "burnout", color: "#ff5c5c", dim: "rgba(255,92,92,0.16)" },
 };
+
+/* within "think": debugging = amber, refactoring = cyan (coder state as light) */
+export const THINK_COLORS = { debug: "#ffc53d", refactor: "#4cc9f0" };
 
 export const DONGLE_COLORS = {
   available: "#4cc9f0",
   inuse: "#ff5c5c",
-  cooling: "#ffc53d",
+  cooling: "#ff8a3d",
 };
 
 export const EVENT_COLORS: Record<string, string> = {
@@ -259,5 +265,91 @@ export function Stat({ label, value, color = "#e8f0f6" }: { label: string; value
         {value}
       </span>
     </div>
+  );
+}
+
+/* ---------------- tooltip (hover = concise definition) ---------------- */
+
+export function Tip({
+  tip,
+  children,
+  className = "",
+  block = false,
+}: {
+  tip: string;
+  children: ReactNode;
+  className?: string;
+  block?: boolean;
+}) {
+  return (
+    <span data-tip={tip} className={`tip ${block ? "block" : "inline-flex"} ${className}`}>
+      {children}
+    </span>
+  );
+}
+
+/* ---------------- toast card (event-driven storytelling) ---------------- */
+
+export function ToastCard({
+  tone,
+  title,
+  body,
+  onWhy,
+  onDismiss,
+}: {
+  tone: string;
+  title: string;
+  body: string;
+  onWhy: () => void;
+  onDismiss: () => void;
+}) {
+  return (
+    <div
+      className="toast-in pointer-events-auto w-[320px] border bg-[#0e161ef2] shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-md"
+      style={{ borderColor: `${tone}55` }}
+    >
+      <div className="flex items-center gap-2 px-3 pt-2.5">
+        <span className="h-2 w-2 rounded-full" style={{ background: tone, boxShadow: `0 0 8px ${tone}` }} />
+        <span className="font-display text-[12px] font-semibold tracking-wide text-ink-100">{title}</span>
+        <button onClick={onDismiss} aria-label="dismiss" className="ml-auto text-ink-400 transition-colors hover:text-ink-100">
+          <svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" strokeWidth="1.4" /></svg>
+        </button>
+      </div>
+      <p className="px-3 pt-1 text-[10.5px] leading-snug text-ink-300">{body}</p>
+      <button
+        onClick={onWhy}
+        className="mx-3 mb-2.5 mt-2 border px-2 py-1 text-[9.5px] font-semibold tracking-[0.14em] transition-all hover:brightness-125 active:translate-y-px"
+        style={{ borderColor: `${tone}66`, color: tone, background: `${tone}12` }}
+      >
+        SHOW ME WHY ▸
+      </button>
+    </div>
+  );
+}
+
+/* ---------------- collapsible section ---------------- */
+
+export function Collapse({
+  title,
+  badge,
+  defaultOpen = true,
+  children,
+}: {
+  title: string;
+  badge?: ReactNode;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <details open={defaultOpen} className="group border border-ink-700 bg-ink-900/60">
+      <summary className="flex cursor-pointer select-none items-center gap-2 px-3 py-2 text-[10px] font-semibold tracking-[0.18em] text-ink-300 transition-colors hover:text-ink-100">
+        <svg width="8" height="8" viewBox="0 0 8 8" className="transition-transform duration-300 group-open:rotate-90">
+          <path d="M2 1l4 3-4 3Z" fill="currentColor" />
+        </svg>
+        {title}
+        <span className="ml-auto">{badge}</span>
+      </summary>
+      <div className="border-t border-ink-700">{children}</div>
+    </details>
   );
 }
