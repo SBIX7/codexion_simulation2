@@ -62,7 +62,7 @@ export function useSimulation(): SimControls {
   const [, setVersion] = useState(0);
 
   const simRef = useRef<Sim>(createSim(cfg));
-  const histRef = useRef<Snapshot[]>([]);
+  const histRef = useRef<Snapshot[]>([stepSim(createSim(cfg))]);
   const idxRef = useRef(0);
 
   const playingRef = useRef(playing);
