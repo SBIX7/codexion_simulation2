@@ -45,9 +45,9 @@ int	parse_args(t_simulation *sim, int argc, char **argv)
 	if (!parse_nonneg_ll(argv[7], &sim->dongle_cooldown) || sim->dongle_cooldown < 0)
 		return (0);
 	if (strcmp(argv[8], "fifo") == 0)
-		sim->scheduler = SCHED_FIFO;
+		sim->scheduler = CODEX_SCHED_FIFO;
 	else if (strcmp(argv[8], "edf") == 0)
-		sim->scheduler = SCHED_EDF;
+		sim->scheduler = CODEX_SCHED_EDF;
 	else
 		return (0);
 	return (1);

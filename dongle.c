@@ -2,7 +2,7 @@
 
 static int	request_cmp(t_request *a, t_request *b, t_scheduler scheduler)
 {
-	if (scheduler == SCHED_FIFO)
+	if (scheduler == CODEX_SCHED_FIFO)
 	{
 		if (a->seq != b->seq)
 			return (a->seq < b->seq);

@@ -10,8 +10,8 @@
 
 typedef enum e_scheduler
 {
-	SCHED_FIFO,
-	SCHED_EDF
+	CODEX_SCHED_FIFO,
+	CODEX_SCHED_EDF
 }   t_scheduler;
 
 typedef struct s_simulation t_simulation;
